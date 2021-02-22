@@ -1,0 +1,41 @@
+name: Flutter CI
+
+on:
+  push: 
+    branches: [master]
+        
+jobs:
+  ios:
+    runs-on: macos-latest
+    steps:  
+    - name: Checkout repository
+      uses: actions/checkout@v2
+    
+    # Setup the flutter environment.
+    - name: Flutter action
+      uses: subosito/flutter-action@v1.4.0
+      with:
+        channel: 'stable' # 'dev', 'alpha', default to: 'stable'
+        # flutter-version: '1.12.x' # you can also specify exact version of flutter
+    
+    - name: Flutter doctor
+      run: flutter doctor
+
+    # Get flutter dependencies.
+    - run: flutter pub get
+    
+    - name: Build iOS app without signing
+      run: flutter build ios --release --no-codesign
+
+    - name: Creating IPA file
+      run: |
+        cd build/ios/iphoneos
+        mkdir Payload
+        mv Runner.app Payload/
+        zip -0 -y -r app.ipa Payload 
+    
+    - name: Upload IPA artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: release-ios
+        path: build/ios/iphoneos/app.ipa
