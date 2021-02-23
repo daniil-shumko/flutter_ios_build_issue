@@ -16,6 +16,16 @@ jobs:
       uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: '12.4'
+
+    - name: Install gpg
+      run: brew install gnupg
+
+    - name: Setup provisioning profile
+      env:
+        IOS_GPG_KEY_PROV: ${{ secrets.IOS_GPG_KEY_PROV }}
+        IOS_GPG_KEY_P12: ${{ secrets.IOS_GPG_KEY_P12 }}
+        IOS_P12_KEY: ${{ secrets.IOS_P12_KEY }}
+      run: ./.github/secrets/decrypt_secrets.sh
     
     # Setup the flutter environment.
     - name: Flutter action
@@ -30,8 +40,8 @@ jobs:
     # Get flutter dependencies.
     - run: flutter pub get
     
-    - name: Build iOS app without signing
-      run: flutter build ios --release --no-codesign --verbose
+    - name: Build iOS app
+      run: flutter build ios --release --verbose
 
     - name: Creating IPA file
       run: |
