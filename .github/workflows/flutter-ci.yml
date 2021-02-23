@@ -41,7 +41,7 @@ jobs:
     - run: flutter pub get
     
     - name: Build iOS app
-      run: flutter build ios --release --verbose
+      run: flutter build ios --release --no-codesign --verbose
 
     - name: Creating IPA file
       run: |
