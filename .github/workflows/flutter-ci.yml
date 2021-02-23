@@ -40,6 +40,8 @@ jobs:
     # Get flutter dependencies.
     - run: flutter pub get
     
+    - run: flutter pub deps -- --style=compact
+
     - name: Build iOS app
       run: flutter build ios --release --verbose
 
