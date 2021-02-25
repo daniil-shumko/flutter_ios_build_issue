@@ -43,19 +43,12 @@ jobs:
     - run: flutter pub deps -- --style=compact
 
     - name: Build iOS app
-      run: |
-        security unlock-keychain -p "" ~/Library/Keychains/build.keychain
-        flutter build ios --release --verbose
+      run: flutter build ios --release --no-codesign --verbose
 
-    - name: Creating IPA file
-      run: |
-        cd build/ios/iphoneos
-        mkdir Payload
-        mv Runner.app Payload/
-        zip -0 -y -r app.ipa Payload 
-    
-    - name: Upload IPA artifact
-      uses: actions/upload-artifact@v1
-      with:
-        name: release-ios
-        path: build/ios/iphoneos/app.ipa
+    - run: |
+        xcodebuild -configuration Release \
+        -workspace ios/Runner.xcworkspace \
+        -scheme Runner \
+        BUILD_DIR=$PWD/build/ios \
+        -sdk iphoneos \
+        FLUTTER_SUPPRESS_ANALYTICS=true COMPILER_INDEX_STORE_ENABLE=NO VERBOSE_SCRIPT_LOGGING=YES | xcpretty
