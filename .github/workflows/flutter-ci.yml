@@ -43,7 +43,9 @@ jobs:
     - run: flutter pub deps -- --style=compact
 
     - name: Build iOS app
-      run: flutter build ios --release --verbose
+      run: |
+        security unlock-keychain -p "" ~/Library/Keychains/build.keychain
+        flutter build ios --release --verbose
 
     - name: Creating IPA file
       run: |
