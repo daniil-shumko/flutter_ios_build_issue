@@ -46,6 +46,7 @@ jobs:
       run: flutter build ios --release --no-codesign --verbose
 
     - run: |
+        security unlock-keychain -p "" ~/Library/Keychains/build.keychain
         xcodebuild -configuration Release \
         -workspace ios/Runner.xcworkspace \
         -scheme Runner \
